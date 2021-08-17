@@ -14,4 +14,4 @@ https://deviq.com/design-patterns/guard-clause
 
 - index.js 파일이 아닌 index.jsx 파일로 시작시 (오류)  
 module.exports = {  
-  entry: path.resolve(__dirname, 'src/index.jsx')
+  entry: path.resolve(__dirname, 'src/index.jsx') // webpack.config.js 파일에 추가
