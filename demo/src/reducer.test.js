@@ -1,79 +1,83 @@
-import reducer from './reducer'
+import reducer from './reducer';
 
 import {
-    updateTaskTitle,
-    addTask,
-    deleteTask,
-} from './actions'
+  setRestaurants,
+  changeRestaurantField,
+  addRestaurant,
+  setCategories,
+} from './actions';
+
+import restaurants from '../fixtures/restaurants';
 
 describe('reducer', () => {
-    describe('updateTaskTitle', () => {
-        it('changes new task title', () => {
-            const state = reducer({
-                taskTitle: '',
-            }, updateTaskTitle('New Title'))
+  describe('setRestaurants', () => {
+    it('changes restaurants array', () => {
+      const initailState = {
+        restaurants: [],
+      };
 
-            expect(state.taskTitle).toBe('New Title');
-        })
-    })
+      const state = reducer(initailState, setRestaurants(restaurants));
 
-    describe('addTask', () => {
-        function reduceAddTask(taskTitle) {
-            return reducer({
-                newId: 100,
-                taskTitle,
-                tasks: [],
-            }, addTask())
+      expect(state.restaurants).not.toHaveLength(0);
+    });
+  });
+  describe('changeRestaurantField', () => {
+    it('changes restaurants form', () => {
+      const initailState = {
+        restaurants: {
+          name: '이름',
+          category: '분류',
+          address: '주소',
+        },
+      };
 
-        }
-        context('with task title', () => {
-            it('appends a new task into tasks', () => {
-                const state = reduceAddTask('New Task')
+      const state = reducer(initailState, changeRestaurantField({
+        name: 'address',
+        value: '서울시 강남구 역삼동',
+      }));
 
-                expect(state.tasks).toHaveLength(1);
-                expect(state.tasks[0].id).not.toBeUndefined()
-                expect(state.tasks[0].title).toBe('New Task')
-            })
+      expect(state.restaurant.address).toBe('서울시 강남구 역삼동');
+    });
+  });
 
-            it('clears task title', () => {
-                const state = reduceAddTask('New Task')
+  describe('addRestaurant', () => {
+    it('append restaurant into restaurants and clear restaurants form', () => {
+      const initailState = {
+        newId: 101,
+        restaurants: [],
+        restaurant: {
+          name: '마법사주방',
+          category: '이탈리안',
+          address: '서울시 강남구 역삼동',
+        },
+      };
 
-                expect(state.taskTitle).toBe('')
-            })
-        })
+      const state = reducer(initailState, addRestaurant());
 
-        context('without task title', () => {
-            it("doesn't", () => {
-                const state = reduceAddTask('')
+      expect(state.restaurants).toHaveLength(1);
 
-                expect(state.tasks).toHaveLength(0);
-            })
-        })
-    })
+      const restaurant = state.restaurants[state.restaurants.length - 1];
+      expect(restaurant.id).toBe(101);
+      expect(restaurant.name).toBe('마법사주방'); // 추가
 
-    describe('deleteTask', () => {
-        context('with existed task ID', () => {
-            it('remove the task from tasks', () => {
-                const state = reducer({
-                    tasks: [
-                        { id: 1, title: 'Task' }
-                    ]
-                }, deleteTask(1))
+      expect(state.restaurant.name).toBe(''); // 삭제
 
-                expect(state.tasks).toHaveLength(0);
-            })
-        })
+      expect(state.newId).toBe(102); // 새로운
+    });
+  });
 
-        context('without existed task ID', () => {
-            it("doesn't work", () => {
-                const state = reducer({
-                    tasks: [
-                        { id: 1, title: 'Task' }
-                    ]
-                }, deleteTask(100))
+  describe('setCategories', () => {
+    it('changes categories', () => {
+      const categories = [
+        { id: 1, name: '한식' },
+      ];
+      const initialState = {
+        categories: [],
+      };
 
-                expect(state.tasks).toHaveLength(1);
-            })
-        })
-    })
-})
+      const state = reducer(initialState, setCategories(categories));
+
+      expect(state.categories).toHaveLength(1);
+    });
+  });
+});

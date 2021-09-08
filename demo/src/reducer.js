@@ -1,43 +1,51 @@
-const initialState = {
-    newId: 100,
-    taskTitle: '',
-    tasks: [],
+const initialRestaurant = {
+  name: '',
+  category: '',
+  address: '',
 };
 
-// Redux action
-// - type (string)
-// - taskTitle ...
+const initialState = {
+  newId: 100,
+  restaurants: [],
+  restaurant: initialRestaurant,
+  categories: [],
+};
 
 export default function reducer(state = initialState, action) {
-    if (action.type === 'updateTaskTitle') {
-        return {
-            ...state,
-            taskTitle: action.payload.taskTitle,
-        }
-    }
-
-    if (action.type === 'addTask') {
-        const { newId, taskTitle, tasks } = state;
-
-        if (!taskTitle) {
-            return state;
-        }
-
-        return ({
-            ...state,
-            newId: newId + 1,
-            taskTitle: '',
-            tasks: [...tasks, { id: newId, title: taskTitle }],
-        })
-    }
-
-    if (action.type === 'deleteTask') {
-        const { tasks } = state;
-        return {
-            ...state,
-            tasks: tasks.filter((task) => task.id !== action.payload.id)
-        };
+  if (action.type === 'setRestaurants') {
+    const { restaurants } = action.payload;
+    return {
+      ...state,
+      restaurants,
     };
+  }
+  if (action.type === 'changeRestaurantField') {
+    const { name, value } = action.payload;
+    return {
+      ...state,
+      restaurant: {
+        ...state.restaurant,
+        [name]: value,
+      },
+    };
+  }
+  if (action.type === 'addRestaurant') {
+    const { newId, restaurants, restaurant } = state;
 
-    return state;
+    return {
+      ...state,
+      newId: newId + 1,
+      restaurants: [...restaurants, { ...restaurant, id: newId }],
+      restaurant: initialRestaurant,
+    };
+  }
+
+  if (action.type === 'setCategories') {
+    const { categories } = action.payload;
+    return {
+      ...state,
+      categories,
+    };
+  }
+  return state;
 }

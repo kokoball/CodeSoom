@@ -1,26 +1,29 @@
 import React from 'react';
-import { render } from '@testing-library/react';
 
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
+
+import { render } from '@testing-library/react';
 
 import App from './App';
 
-jest.mock('react-redux')
+jest.mock('react-redux');
+jest.mock('./services/api');
 
-test('APP', () => {
-  // ToDo: useSelector 조작
-  const tasks = [
-    { id: 1, title: '아무 것도 하지 않기 #1' },
-    { id: 2, title: '아무 것도 하지 않기 #2' },
-  ];
+test('App', () => {
+  const dispatch = jest.fn();
+  useDispatch.mockImplementation(() => dispatch);
 
   useSelector.mockImplementation((selector) => selector({
-    tasks,
-  }))
+    restaurants: [],
+    restaurant: {},
+    categories: [],
+  }));
 
-  const { getByText } = render(<App />);
+  const { queryByText } = render((
+    <App />
+  ));
 
-  expect(getByText(/추가/)).not.toBeNull();
-  expect(getByText(/아무 것도 하지 않기 #1/)).not.toBeNull();
+  expect(dispatch).toBeCalledTimes(2);
 
+  expect(queryByText(/김밥제국/)).toBeNull();
 });
