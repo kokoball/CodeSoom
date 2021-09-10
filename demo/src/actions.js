@@ -35,11 +35,11 @@ export function loadRestaurants() {
   };
 }
 
-export function setCategories(categorids) {
+export function setCategories(categories) {
   return {
     type: 'setCategories',
     payload: {
-      categorids,
+      categories,
     },
   };
 }
