@@ -1,29 +1,65 @@
 import React from 'react';
 
-import { useSelector, useDispatch } from 'react-redux';
+import {
+  MemoryRouter,
+} from 'react-router-dom';
+
+import { useDispatch, useSelector } from 'react-redux';
 
 import { render } from '@testing-library/react';
 
 import App from './App';
 
-jest.mock('react-redux');
-jest.mock('./services/api');
+describe('App', () => {
+  beforeEach(() => {
+    const dispatch = jest.fn();
 
-test('App', () => {
-  const dispatch = jest.fn();
-  useDispatch.mockImplementation(() => dispatch);
+    useDispatch.mockImplementation(() => dispatch);
 
-  useSelector.mockImplementation((selector) => selector({
-    restaurants: [],
-    restaurant: {},
-    categories: [],
-  }));
+    useSelector.mockImplementation((selector) => selector({
+      regions: [{ id: 1, name: '서울' }],
+      categories: [],
+      restaurants: [],
+    }));
+  });
 
-  const { queryByText } = render((
-    <App />
-  ));
+  function renderApp({ path }) {
+    return render((
+      <MemoryRouter initialEntries={[path]}>
+        <App />
+      </MemoryRouter>
+    ));
+  }
 
-  expect(dispatch).toBeCalledTimes(2);
+  context('with path /', () => {
+    it('renders HomePage', () => {
+      const { container } = renderApp({ path: '/' });
 
-  expect(queryByText(/김밥제국/)).toBeNull();
+      expect(container).toHaveTextContent('Home');
+    });
+  });
+
+  context('with path /about', () => {
+    it('renders the about page', () => {
+      const { container } = renderApp({ path: '/about' });
+
+      expect(container).toHaveTextContent('무야호');
+    });
+  });
+
+  context('with path /restaurants', () => {
+    it('renders the restaurants page', () => {
+      const { container } = renderApp({ path: '/restaurants' });
+
+      expect(container).toHaveTextContent('서울');
+    });
+  });
+
+  context('with invalid path', () => {
+    it('renders the not found page', () => {
+      const { container } = renderApp({ path: '/xxx' });
+
+      expect(container).toHaveTextContent('Not Found');
+    });
+  });
 });

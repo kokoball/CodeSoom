@@ -1,30 +1,28 @@
-import React, { useEffect } from 'react';
-
-import { useDispatch } from 'react-redux';
-
-import CategoriesContainer from './CategoriesContainer';
-import RestaurantsContainer from './RestaurantsContainer';
-import RestaurantsCreateContainer from './RestaurantsCreateContainer';
+import React from 'react';
 
 import {
-  loadRestaurants,
-  loadCategories,
-} from './actions';
+  Switch, Route, Link,
+} from 'react-router-dom';
+
+import HomePage from './HomePage';
+import AboutPage from './AboutPage';
+import NotFoundPage from './NotFoundPage';
+import RestaurantsPage from './RestaurantsPage';
 
 export default function App() {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(loadCategories());
-    dispatch(loadRestaurants());
-  }, []);
-
   return (
     <div>
-      <h1>Restaurants</h1>
-      <CategoriesContainer />
-      <RestaurantsContainer />
-      <RestaurantsCreateContainer />
+      <header>
+        <h1>
+          <Link to="/">해더 영역</Link>
+        </h1>
+      </header>
+      <Switch>
+        <Route exact path="/" component={HomePage} />
+        <Route path="/about" component={AboutPage} />
+        <Route path="/restaurants" component={RestaurantsPage} />
+        <Route component={NotFoundPage} />
+      </Switch>
     </div>
   );
 }

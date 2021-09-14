@@ -1,37 +1,15 @@
-import { fetchCategories } from './services/api';
+import {
+  fetchCategories,
+  fetchRegions,
+  fetchRestaurants,
+} from './services/api';
 
-export function setRestaurants(restaurants) {
+export function setRegions(regions) {
   return {
-    type: 'setRestaurants',
+    type: 'setRegions',
     payload: {
-      restaurants,
+      regions,
     },
-  };
-}
-
-export function changeRestaurantField({ name, value }) {
-  return {
-    type: 'changeRestaurantField',
-    payload: {
-      name,
-      value,
-    },
-  };
-}
-
-export function addRestaurant() {
-  return {
-    type: 'addRestaurant',
-  };
-}
-export function loadRestaurants() {
-  return async (dispatch) => {
-    // TODO: fetch...
-    const restaurants = [];
-    // TODO: load restaurants from API server.
-    // 1. API server 확보
-    // 2. fetch
-    dispatch(setRestaurants(restaurants));
   };
 }
 
@@ -43,9 +21,58 @@ export function setCategories(categories) {
     },
   };
 }
-export function loadCategories() {
+
+export function setRestaurants(restaurants) {
+  return {
+    type: 'setRestaurants',
+    payload: {
+      restaurants,
+    },
+  };
+}
+
+export function selectRegion(regionId) {
+  return {
+    type: 'selectRegion',
+    payload: {
+      regionId,
+    },
+  };
+}
+
+export function selectCategory(categoryId) {
+  return {
+    type: 'selectCategory',
+    payload: {
+      categoryId,
+    },
+  };
+}
+
+export function loadInitialDate() {
   return async (dispatch) => {
+    const regions = await fetchRegions();
+    dispatch(setRegions(regions));
+
     const categories = await fetchCategories();
-    dispatch(setRestaurants(categories));
+    dispatch(setCategories(categories));
+  };
+}
+
+export function loadRestaurants() {
+  return async (dispatch, getState) => {
+    const {
+      selectedRegion: region,
+      selectedCategory: category,
+    } = getState();
+
+    if (!region || !category) {
+      return;
+    }
+    const restaurants = await fetchRestaurants({
+      regionName: region.name,
+      categoryId: category.id,
+    });
+    dispatch(setRestaurants(restaurants));
   };
 }

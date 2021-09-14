@@ -1,17 +1,21 @@
 import React from 'react';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import Restaurants from './Restaurants';
+import { get } from './utils';
 
-export default function RestaurantsContainer() {
-  const { restaurants } = useSelector((state) => ({
-    restaurants: state.restaurants,
-  }));
+export default function Restaurantscontainer() {
+  const dispatch = useDispatch();
+
+  const restaurants = useSelector(get('restaurants'));
 
   return (
-    <div>
-      <Restaurants restaurants={restaurants} />
-    </div>
+    <ul>
+      {restaurants.map((restaurant) => (
+        <li key={restaurant.id}>
+          {restaurant.name}
+        </li>
+      ))}
+    </ul>
   );
 }
