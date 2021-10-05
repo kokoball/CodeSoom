@@ -1,14 +1,12 @@
 import React from 'react';
 
+import { MemoryRouter } from 'react-router-dom';
+
 import { useDispatch, useSelector } from 'react-redux';
 
 import { render, fireEvent } from '@testing-library/react';
 
 import RegionsContainer from './RegionsContainer';
-
-import regions from '../fixtures/regions';
-
-jest.mock('react-redux');
 
 test('RegionsContainer', () => {
   const dispatch = jest.fn();
@@ -16,10 +14,14 @@ test('RegionsContainer', () => {
   useDispatch.mockImplementation(() => dispatch);
 
   useSelector.mockImplementation((selector) => selector({
-    regions,
+    regions: [
+      { id: 1, name: '서울' },
+    ],
   }));
   const { getByText } = render((
-    <RegionsContainer />
+    <MemoryRouter>
+      <RegionsContainer />
+    </MemoryRouter>
   ));
 
   expect(getByText('서울')).not.toBeNull();

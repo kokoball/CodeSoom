@@ -2,6 +2,8 @@ import {
   fetchCategories,
   fetchRegions,
   fetchRestaurants,
+  fetchRestaurant,
+  postLogin,
 } from './services/api';
 
 export function setRegions(regions) {
@@ -27,6 +29,15 @@ export function setRestaurants(restaurants) {
     type: 'setRestaurants',
     payload: {
       restaurants,
+    },
+  };
+}
+
+export function setRestaurant(restaurant) {
+  return {
+    type: 'setRestaurant',
+    payload: {
+      restaurant,
     },
   };
 }
@@ -74,5 +85,44 @@ export function loadRestaurants() {
       categoryId: category.id,
     });
     dispatch(setRestaurants(restaurants));
+  };
+}
+
+export function loadRestaurant({ restaurantId }) {
+  return async (dispatch) => {
+    dispatch(setRestaurant(null));
+
+    const restaurant = await fetchRestaurant({ restaurantId });
+
+    dispatch(setRestaurant(restaurant));
+  };
+}
+
+export function changeLoginField({ name, value }) {
+  return {
+    type: 'changeLoginField',
+    payload: { name, value },
+  };
+}
+
+export function setAccessToken(accessToken) {
+  return {
+    type: 'setAccessToken',
+    payload: { accessToken },
+  };
+}
+
+export function requestLogin() {
+  // state = email, password
+  // HTTP POST <- email, password
+  return async (dispatch, getState) => {
+    const { loginFields: { email, password } } = getState();
+
+    try {
+      const accessToken = postLogin({ email, password });
+      dispatch(setAccessToken(accessToken));
+    } catch (e) {
+      // TODO: sdf
+    }
   };
 }
