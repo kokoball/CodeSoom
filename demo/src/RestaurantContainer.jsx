@@ -3,46 +3,16 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import RestaurantDetail from './RestaurantDetail';
+import ReviewForm from './ReviewForm';
+import Reviews from './Reviews';
 
 import {
   loadRestaurant,
   changeReviewField,
+  sendReview,
 } from './actions';
 
 import { get } from './utils';
-
-function ReviewForm({ onChange }) {
-  function handleChange(event) {
-    const { target: { name, value } } = event;
-    onChange({ name, value });
-  }
-  return (
-    <>
-      <div>
-        <label htmlFor="review-score">
-          평점
-        </label>
-        <input
-          type="number"
-          id="review-score"
-          name="score"
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label htmlFor="review-description">
-          리뷰 내용
-        </label>
-        <input
-          type="text"
-          id="review-description"
-          name="description"
-          onChange={handleChange}
-        />
-      </div>
-    </>
-  );
-}
 
 export default function RestaurantContainer({ restaurantId }) {
   const dispatch = useDispatch();
@@ -51,7 +21,9 @@ export default function RestaurantContainer({ restaurantId }) {
     dispatch(loadRestaurant({ restaurantId }));
   }, []);
 
+  const accessToken = useSelector(get('accessToken'));
   const restaurant = useSelector(get('restaurant'));
+  const reviewFields = useSelector(get('reviewFields'));
 
   if (!restaurant) {
     return (
@@ -63,12 +35,21 @@ export default function RestaurantContainer({ restaurantId }) {
     dispatch(changeReviewField({ name, value }));
   }
 
+  function handleSubmit() {
+    dispatch(sendReview({ restaurantId }));
+  }
+
   return (
     <>
       <RestaurantDetail restaurant={restaurant} />
-      <ReviewForm
-        onChange={handleChange}
-      />
+      {accessToken ? (
+        <ReviewForm
+          fields={reviewFields}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+        />
+      ) : null}
+      <Reviews reviews={restaurant.reviews} />
     </>
   );
 }

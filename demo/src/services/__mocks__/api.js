@@ -15,3 +15,19 @@ export async function fetchRestaurant({ restaurantId }) {
     id: restaurantId,
   };
 }
+
+export async function postLogin({ email, password }) {
+  return {
+    email, password,
+  };
+}
+export async function portReview({
+  accessToken, restaurantId, score, description,
+}) {
+  return {
+    accessToken,
+    restaurantId,
+    score,
+    description,
+  };
+}

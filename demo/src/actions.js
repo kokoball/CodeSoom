@@ -4,7 +4,10 @@ import {
   fetchRestaurants,
   fetchRestaurant,
   postLogin,
+  postReview,
 } from './services/api';
+
+import { saveItem } from './services/storage';
 
 export function setRegions(regions) {
   return {
@@ -118,12 +121,16 @@ export function requestLogin() {
   return async (dispatch, getState) => {
     const { loginFields: { email, password } } = getState();
 
-    try {
-      const accessToken = postLogin({ email, password });
-      dispatch(setAccessToken(accessToken));
-    } catch (e) {
-      // TODO: sdf
-    }
+    const accessToken = postLogin({ email, password });
+    // TODO: 로그인 성공하면 -> localstorage에 저장
+    saveItem('accessToken', accessToken);
+
+    dispatch(setAccessToken(accessToken));
+  };
+}
+export function logout() {
+  return {
+    type: 'logout',
   };
 }
 
@@ -131,5 +138,45 @@ export function changeReviewField({ name, value }) {
   return {
     type: 'changeReviewField',
     payload: { name, value },
+  };
+}
+
+export function clearReviewFields() {
+  return {
+    type: 'clearReviewFields',
+  };
+}
+
+export function setReviews(reviews) {
+  return {
+    type: 'setReviews',
+    payload: { reviews },
+  };
+}
+
+export function loadRebiew({ restaurantId }) {
+  return async (dispatch) => {
+    const restaurant = await fetchRestaurant({ restaurantId });
+
+    dispatch(setReviews(restaurant.reviews));
+  };
+}
+
+export function sendReview({ restaurantId }) {
+  return async (dispatch, getState) => {
+    const { accessToken, reviewFields: { score, description } } = getState();
+
+    // 1. 먼저 지운다.
+    await postReview({
+      accessToken,
+      restaurantId,
+      score,
+      description,
+    });
+    // 2. 완료가 되면 지운다.
+    dispatch(loadRebiew({ restaurantId }));
+
+    // 3. 업데이트가 끝나면 지운다.
+    dispatch(clearReviewFields());
   };
 }

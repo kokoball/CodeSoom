@@ -10,10 +10,16 @@ import { render } from '@testing-library/react';
 
 import App from './App';
 
-describe('App', () => {
-  beforeEach(() => {
-    const dispatch = jest.fn();
+import { loadItem } from './services/storage';
 
+jest.mock('react-redux');
+jest.mock('./services/storage');
+
+describe('App', () => {
+  const dispatch = jest.fn();
+
+  beforeEach(() => {
+    dispatch.mockClear();
     useDispatch.mockImplementation(() => dispatch);
 
     useSelector.mockImplementation((selector) => selector({
@@ -60,6 +66,35 @@ describe('App', () => {
       const { container } = renderApp({ path: '/xxx' });
 
       expect(container).toHaveTextContent('Not Found');
+    });
+  });
+
+  context('when logged out', () => {
+    beforeEach(() => {
+      loadItem.mockImplementation(() => null);
+    });
+
+    it("doesn't call dispatch", () => {
+      renderApp({ path: '/' });
+
+      expect(dispatch).toBeCalled(); // 왜 안될까
+    });
+  });
+
+  context('when logged in', () => {
+    const accessToken = 'ACCESS_TOKEN';
+
+    beforeEach(() => {
+      loadItem.mockImplementation(() => accessToken);
+    });
+
+    it('calls dispatch with "setAccessToken" action', () => {
+      renderApp({ path: '/' });
+
+      expect(dispatch).toBeCalledWith({
+        type: 'setAccessToken',
+        payload: { accessToken },
+      });
     });
   });
 });

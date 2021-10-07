@@ -5,11 +5,36 @@ import { render, fireEvent } from '@testing-library/react';
 import TextField from './TextField';
 
 describe('TextField', () => {
-  context('with type', () => {
-    it('renders label and input control', () => {
+  context('without type', () => {
+    function renderTextField() {
       const handleChange = jest.fn();
 
-      const { queryByLabelText } = render((
+      return render((
+        <TextField
+          label="리뷰 설명"
+          name="description"
+          onChange={handleChange}
+        />
+      ));
+    }
+    it('renders label and input control', () => {
+      const { queryByLabelText } = renderTextField();
+
+      expect(queryByLabelText('리뷰 설명')).not.toBeNull();
+    });
+
+    it('renders "text" input control', () => {
+      const { container } = renderTextField();
+
+      expect(container).toContainHTML('type="text"');
+    });
+  });
+
+  context('with type', () => {
+    function renderTextField() {
+      const handleChange = jest.fn();
+
+      return render((
         <TextField
           label="평점"
           type="number"
@@ -17,29 +42,56 @@ describe('TextField', () => {
           onChange={handleChange}
         />
       ));
+    }
+    it('renders label and input control', () => {
+      const { container, queryByLabelText } = renderTextField();
 
       expect(queryByLabelText('평점')).not.toBeNull();
+      expect(container).toContainHTML('type="number"');
     });
-  }); 31;
 
-  //  it('listens change event', () => {
-  //   const handleChange = jest.fn();
+    it('renders "number" input control', () => {
+      const { container } = renderTextField();
 
-  //   const { getByLabelText } = render((
-  //     <TextField
-  //       onChange={handleChange}
-  //     />
-  //   ));
+      expect(container).toContainHTML('type="number"');
+    });
+  });
 
-  //   const controls = [
-  //     { label: '평점', name: 'score', value: '5' },
-  //     { label: '리뷰 내용', name: 'description', value: '정말 최고 :)' },
-  //   ];
+  it('renders value', () => {
+    const name = 'score';
+    const value = '5';
 
-  //   controls.forEach(({ label, name, value }) => {
-  //     fireEvent.change(getByLabelText(label), { target: { value } });
+    const handleChange = jest.fn();
 
-  //     expect(handleChange).toBeCalledWith({ name, value });
-  //   });
-  // });
+    const { getByLabelText } = render((
+      <TextField
+        label="평점"
+        type="number"
+        name={name}
+        value={value}
+        onChange={handleChange}
+      />
+    ));
+
+    expect(getByLabelText('평점').value).toBe(value);
+  });
+
+  it('listens change event', () => {
+    const name = 'score';
+    const value = '5';
+    const handleChange = jest.fn();
+
+    const { getByLabelText } = render((
+      <TextField
+        label="평점"
+        type="number"
+        name={name}
+        onChange={handleChange}
+      />
+    ));
+
+    fireEvent.change(getByLabelText('평점'), { target: { value } });
+
+    expect(handleChange).toBeCalledWith({ name, value });
+  });
 });

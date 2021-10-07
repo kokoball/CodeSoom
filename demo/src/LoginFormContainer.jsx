@@ -4,9 +4,24 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import LoginForm from './LoginForm';
 
-import { changeLoginField, requestLogin } from './actions';
+import {
+  changeLoginField,
+  requestLogin,
+  logout,
+} from './actions';
 
 import { get } from './utils';
+
+function LogoutForm({ onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+    >
+      Log out
+    </button>
+  );
+}
 
 export default function LoginFormContainer() {
   const dispatch = useDispatch();
@@ -20,16 +35,24 @@ export default function LoginFormContainer() {
 
   function handleSubmit() {
     dispatch(requestLogin());
+    // TODO: 로그인 성공하면 -> localstorage에 저장
+  }
+
+  function handleClickLogout() {
+    dispatch(logout());
   }
 
   return (
     <>
-      <LoginForm
-        fields={{ email, password }}
-        onChange={handleChange}
-        onSubmit={handleSubmit}
-      />
-      <p>{accessToken}</p>
+      {accessToken ? (
+        <LogoutForm onClick={handleClickLogout} />
+      ) : (
+        <LoginForm
+          fields={{ email, password }}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+        />
+      )}
     </>
   );
 }
