@@ -6,6 +6,9 @@ import {
 
 import { useDispatch } from 'react-redux';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+import styled from '@emotion/styled';
+
 import HomePage from './HomePage';
 import AboutPage from './AboutPage';
 import LoginPage from './LoginPage';
@@ -17,6 +20,27 @@ import { setAccessToken } from './actions';
 
 import { loadItem } from './services/storage';
 
+const Container = styled.div({
+  margin: '0 auto',
+  width: '90%',
+});
+
+const Header = styled.header({
+  backgroundColor: '#EEE',
+  '& h1': {
+    fontSize: '1.5em',
+    margin: 0,
+    padding: '1em .5em',
+  },
+  '& a': {
+    color: '#555',
+    textDecoration: 'none',
+    '&:hover': {
+      color: '#000',
+    },
+  },
+});
+
 export default function App() {
   const dispatch = useDispatch();
   // TODO: localstorage에서 accessToken 가져오기
@@ -26,12 +50,12 @@ export default function App() {
     dispatch(setAccessToken(accessToken));
   }
   return (
-    <div>
-      <header>
+    <Container>
+      <Header>
         <h1>
-          <Link to="/">해더 영역</Link>
+          <Link to="/">Eatgo</Link>
         </h1>
-      </header>
+      </Header>
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route path="/about" component={AboutPage} />
@@ -40,6 +64,6 @@ export default function App() {
         <Route path="/restaurants/:id" component={RestaurantPage} />
         <Route component={NotFoundPage} />
       </Switch>
-    </div>
+    </Container>
   );
 }

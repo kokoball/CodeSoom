@@ -53,5 +53,8 @@ module.exports = {
 
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off',
+
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+
   },
 };

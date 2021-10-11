@@ -77,7 +77,7 @@ describe('App', () => {
     it("doesn't call dispatch", () => {
       renderApp({ path: '/' });
 
-      expect(dispatch).toBeCalled(); // 왜 안될까
+      expect(dispatch).toBeCalled(); // 왜 안될까 not.tobecalled
     });
   });
 
