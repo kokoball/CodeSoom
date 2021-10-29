@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Reviews({ reviews }) {
+function Reviews({ reviews }) {
   if (!reviews || !reviews.length) {
     return null;
   }
@@ -26,3 +26,5 @@ export default function Reviews({ reviews }) {
     </ul>
   );
 }
+
+export default React.memo(Reviews); // 값이 바뀔때만 virtual dom으로 바꿔주도록 / 아니면 그대로
