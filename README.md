@@ -8,7 +8,7 @@
 - Expercted linebreaks to be 'LF' but found 'CRLF'  
 빌드 시 개행문자 관련 경고 // .eslintrc.js 파일의 rules에 'linebreak-style':0, 추가
 
-- guard-clause
+- guard-clause 예시
 https://deviq.com/design-patterns/guard-clause
 
 - index.js 파일이 아닌 index.jsx 파일로 시작시 (오류)  
