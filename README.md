@@ -5,7 +5,7 @@
   Object.entries(props || {}).forEach(([key, value]) => {
     element[key.toLowerCase()] = value;
   });
-- Expercted linebreaks to be 'LF' but found 'CRLF'  
+- Expercted linebreaks to be 'LF' but found 'CRLF' . 
 빌드 시 개행문자 관련 경고 // .eslintrc.js 파일의 rules에 'linebreak-style':0, 추가
 
 - guard-clause 예시
